@@ -5,10 +5,12 @@ Werkzeug Documentation:  http://werkzeug.pocoo.org/documentation/
 This file creates your application.
 """
 
-from app import app
-from flask import render_template, request, redirect, url_for
-
-
+from app import app, db
+from flask import render_template, request, redirect, url_for, flash, session, abort, send_from_directory
+import os
+from werkzeug.utils import secure_filename
+from .forms import PropertyForm
+from app.model import Property
 ###
 # Routing for your application.
 ###
@@ -24,6 +26,32 @@ def about():
     """Render the website's about page."""
     return render_template('about.html', name="Mary Jane")
 
+@app.route('/property', methods=['GET', 'POST'])
+def new_property():
+    """ displays form for new property"""
+    form = PropertyForm
+    
+    if request.method == 'POST' and form.validate_on_submit():
+        title = form.title.data 
+        num_bedrooms = form.num_bedrooms.data
+        num_bathrooms = form.num_bathrooms.data
+        description = form.description.data
+        types = form.types.data
+        photo = form.photo.data
+        flash('Thank you for completing our Form!')
+        return render_template('property_page', title=title, num_bedrooms=num_bedrooms,
+        num_bathrooms=num_bathrooms, desc=description, types=types, photo=photo)  
+    return render_template('new_property.html', form=form)      
+
+@app.route('/properties')
+def properties():
+    """ list of all properties in grid fashion"""
+    
+
+@app.route('/property/<propertyid>')
+def property_page(propertyid):
+    """ viewing individual property via property ID """
+    return Property.query.get(int(propertyid))
 
 ###
 # The functions below should be applicable to all Flask apps.
