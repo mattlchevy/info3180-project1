@@ -12,10 +12,10 @@ property_types = ['House', 'Apartment']
 
 class PropertyForm(FlaskForm):
     title = StringField('Title', validators=[DataRequired()])
-    num_bedrooms = StringField('Number Of Bedrooms', validators=[InputRequired()])
-    num_bathrooms = StringField('Number of Bathrooms', validators=[InputRequired()])
+    num_bedrooms = StringField('Number Of Bedrooms', validators=[DataRequired()])
+    num_bathrooms = StringField('Number of Bathrooms', validators=[DataRequired()])
     location = StringField('Location', validators=[DataRequired()])
-    price = StringField('Price', validators=[InputRequired()])
+    price = StringField('Price', validators=[DataRequired()])
     types = SelectField('Type', choices=property_types)
     description = TextAreaField('Description', widget=TextArea(row=10, cols=15))
     photo = FileField('Photo', validators=[

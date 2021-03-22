@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block main %}
+{% include 'flash_msgs.html' %}
+<h1>Properties</h1>
+
+    <div class="table-responsive">
+        {% if properties %}
+        {% for property in properties %}
+           <div class='card'>
+              <<div class="photo">
+              {{ property.photo }}
+           </div>
+        {% endfor %}
+        {% else %}
+        <p>There are no properties to display</p>
+        {% endif %}
+    </div>
+{% endblock %}

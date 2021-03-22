@@ -29,26 +29,37 @@ def about():
 @app.route('/property', methods=['GET', 'POST'])
 def new_property():
     """ displays form for new property"""
-    form = PropertyForm
+    form = PropertyForm()
     
     if request.method == 'POST' and form.validate_on_submit():
         title = form.title.data 
         num_bedrooms = form.num_bedrooms.data
         num_bathrooms = form.num_bathrooms.data
         description = form.description.data
+        location = form.location.data
         types = form.types.data
         photo = form.photo.data
+        filename = secure_filename(photo.filename)
         flash('Thank you for completing our Form!')
-        return render_template('property_page', title=title, num_bedrooms=num_bedrooms,
-        num_bathrooms=num_bathrooms, desc=description, types=types, photo=photo)  
+        photo.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        user_property = Property(title, description, num_bedrooms, num_bathrooms, location, types, filename)
+        db.session.add(user_property)
+        db.session.commit()
+        return redirect(url_for('properties'))
     return render_template('new_property.html', form=form)      
 
 @app.route('/properties')
 def properties():
     """ list of all properties in grid fashion"""
-    
 
-@app.route('/property/<propertyid>')
+    db = connect_db()
+    cur = db.cursor()
+    cur.execute('select * from Property ')
+    properties = cur.fetchall()
+    return render_template('properties.html', properties=properties)
+
+
+@app.route('/property/<int:propertyid>')
 def property_page(propertyid):
     """ viewing individual property via property ID """
     return Property.query.get(int(propertyid))
